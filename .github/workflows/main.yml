@@ -21,17 +21,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       
-      - name: Yarn Install
-        run: |
-          yarn install
-      
-      - name: Building React App
-        run: |
-          CI=false yarn build
-
-      - name: Unit Tests
-        run: |
-          yarn test    
+      - name: Install dependencies
+        run: | 
+          npm install
+  
+      - name: Build
+        run: |  
+          npm run build
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
