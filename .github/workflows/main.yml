@@ -1,6 +1,8 @@
 name: Demo Build
 on:
   push:
+    tags:
+      - 'v*.*.*'
     branches:
       - main
 
@@ -18,17 +20,28 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Get Latest Release
-        uses: actions/github-script@v5
-        id: get_latest_release
-        with:
-          script: |
-            const { data: releases } = await github.repos.listReleases({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              per_page: 1 // Get only the latest release
-            });
-            console.log(releases[0].tag_name);
+      - name: Set output
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
+        
+      - name: Check output
+        env:
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}    
+
+      # - name: Get Latest Release
+      #   uses: actions/github-script@v5
+      #   id: get_latest_release
+      #   with:
+      #     script: |
+      #       const { data: releases } = await github.repos.listReleases({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         per_page: 1 // Get only the latest release
+      #       });
+      #       console.log(releases[0].tag_name);
       
       - name: Yarn Install
         run: |
