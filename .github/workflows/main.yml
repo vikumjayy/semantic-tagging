@@ -26,8 +26,12 @@ jobs:
           yarn install
 
       - name: Yarn Build
-        run: |  
-          yarn build
+        run: |
+          CI=false yarn build
+
+      - name: Unit Tests
+        run: |
+          yarn test
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
